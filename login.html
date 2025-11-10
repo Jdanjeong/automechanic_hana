@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>오픈링크 협력사 현황 로그인</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-box {
+      background-color: white;
+      padding: 40px 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    .login-box img {
+      height: 30px;
+      vertical-align: middle;
+    }
+
+    .login-box h2 {
+      margin-top: 20px;
+      margin-bottom: 30px;
+      font-size: 22px;
+      color: #333;
+    }
+
+    select, input[type="password"] {
+      width: 80%;
+      padding: 10px 12px;
+      margin: 10px auto;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      background-color: #2d6dc4;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background-color: #1c59a8;
+    }
+
+    .logo-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <div class="logo-row">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Hyundai_Capital_logo.svg/500px-Hyundai_Capital_logo.svg.png" alt="HCS Logo">
+      <span style="font-size: 22px; font-weight: bold; color: #333;">X</span>
+      <img src="https://taksong-driver.openmile.kr/openlink.png" alt="Openlink Logo" style="height: 20px;">
+    </div>
+
+    <h2>오픈링크 협력사 현황</h2>
+
+    <form onsubmit="return login(event)">
+      <select id="username" required>
+        <option value="" disabled selected>사용자 유형 선택</option>
+        <option value="HCS">사용자 (HCS)</option>
+        <option value="openlink">사용자 (Openlink)</option>
+        <option value="admin">관리자</option>
+      </select>
+      <input type="password" id="password" placeholder="비밀번호" required>
+      <button type="submit">로그인</button>
+    </form>
+  </div>
+
+  <script>
+    function login(event) {
+      event.preventDefault();
+      const id = document.getElementById('username').value;
+      const pw = document.getElementById('password').value;
+
+      if (id === 'admin' && pw === '62400947') {
+        sessionStorage.setItem("loginUser", "admin");
+        window.location.href = 'admin.html';
+      } else if (id === 'openlink' && pw === '0947') {
+        sessionStorage.setItem("loginUser", "openlink");
+        window.location.href = 'user.html';
+      } else if (id === 'HCS' && pw === '1234') {
+        sessionStorage.setItem("loginUser", "HCS");
+        window.location.href = 'user.html';
+      } else {
+        alert('아이디 또는 비밀번호를 확인해주세요.');
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+
+</body>
+</html>
+
