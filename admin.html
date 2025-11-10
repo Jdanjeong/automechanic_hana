@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script>
+  const loginUser = sessionStorage.getItem("loginUser");
+
+  // 페이지별 허용된 사용자 체크
+  const isAdminPage = location.pathname.includes("admin");
+  const isUserPage = location.pathname.includes("user");
+
+    if (
+    (isAdminPage && loginUser !== "admin") || 
+    (isUserPage && loginUser !== "openlink" && loginUser !== "HCS")
+  ) {
+    alert("로그인이 필요합니다.");
+    window.location.href = "login.html";
+  }
+</script>
+  <meta charset="UTF-8">
+  <title>관리자 페이지 - 협력사 업로드</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    #saveBtn {
+      margin-top: 15px;
+      padding: 10px 15px;
+      font-size: 14px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #saveBtn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h2>협력사 업로드 및 목록 확인 (관리자 전용)</h2>
+  <input type="file" id="excelFile" accept=".xlsx">
+  <button id="saveBtn" style="display:none;" onclick="downloadJSON()">📥 저장</button>
+  <div id="tableContainer"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    let factoryData = [];
+
+    document.getElementById('excelFile').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        // 테이블 생성
+        let html = '<table><thead><tr>';
+        json[0].forEach(cell => html += `<th>${cell}</th>`);
+        html += '</tr></thead><tbody>';
+        factoryData = []; // 초기화
+
+        for (let i = 1; i < json.length; i++) {
+          const row = {};
+          json[0].forEach((col, idx) => {
+            row[col] = json[i][idx] || '';
+          });
+          factoryData.push(row);
+
+          html += '<tr>' + json[i].map(cell => `<td>${cell || ''}</td>`).join('') + '</tr>';
+        }
+        html += '</tbody></table>';
+
+        document.getElementById('tableContainer').innerHTML = html;
+        document.getElementById('saveBtn').style.display = 'inline-block';
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
+
+    function downloadJSON() {
+      const blob = new Blob([JSON.stringify(factoryData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'factory.json';
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
